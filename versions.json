@@ -1,0 +1,9 @@
+{
+  "redis": "6.0",
+  "postgres": "13",
+  "pgadmin4": "23",
+  "minio": "RELEASE.2020-07-14T19-14-30Z",
+  "mc": "RELEASE.2020-06-16T19-24-41Z",
+  "python": "3.7",
+  "nginx": "1.19"
+}

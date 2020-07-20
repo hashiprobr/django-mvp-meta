@@ -1,0 +1,6 @@
+env
+dev/db
+dev/filestore
+test/db
+test/filestore
+**/__pycache__

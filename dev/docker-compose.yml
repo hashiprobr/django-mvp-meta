@@ -1,0 +1,31 @@
+version: '3.7'
+
+services:
+  broker:
+    image: redis:${REDIS_VERSION}
+    command: --port 6378
+    ports:
+      - 6378:6378
+
+  db:
+    image: postgres:${POSTGRES_VERSION}
+    volumes:
+      - ./db:/var/lib/postgresql/data
+    environment:
+      POSTGRES_DB: dev
+      POSTGRES_USER: dev
+      POSTGRES_PASSWORD: dev
+    command: -p 5431
+    ports:
+      - 5431:5431
+
+  dbadmin:
+    image: dpage/pgadmin4:4.${PGADMIN4_VERSION}
+    volumes:
+      - ./servers.json:/pgadmin4/servers.json:ro
+    environment:
+      PGADMIN_LISTEN_PORT: 5050
+      PGADMIN_DEFAULT_EMAIL: dbadmin
+      PGADMIN_DEFAULT_PASSWORD: dbadmin
+    ports:
+      - 5050:5050

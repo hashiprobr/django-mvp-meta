@@ -1,0 +1,5 @@
+test/db
+test/filestore
+**/__pycache__
+**/static
+**/tests
