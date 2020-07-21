@@ -92,18 +92,21 @@ def rm(path):
 
 
 def dev(args):
-    if is_up(DEV_DIR):
-        print('Development environment already running')
-    elif is_up(TEST_DIR):
-        print('Testing environment is running')
+    if os.path.exists(DEV_DIR):
+        if is_up(DEV_DIR):
+            print('Development environment already running')
+        elif is_up(TEST_DIR):
+            print('Testing environment is running')
+        else:
+            set_up(DEV_DIR, args)
     else:
-        set_up(DEV_DIR, args)
+        print('Development environment not available')
 
 
 def test(args):
     if is_up(TEST_DIR):
         print('Testing environment already running')
-    elif is_up(DEV_DIR):
+    elif os.path.exists(DEV_DIR) and is_up(DEV_DIR):
         print('Development environment is running')
     else:
         build([])
@@ -112,7 +115,7 @@ def test(args):
 
 
 def restart(args):
-    if is_up(DEV_DIR):
+    if os.path.exists(DEV_DIR) and is_up(DEV_DIR):
         tear_set(DEV_DIR, args)
     elif is_up(TEST_DIR):
         tear_set(TEST_DIR, args)
@@ -121,7 +124,7 @@ def restart(args):
 
 
 def down(args):
-    if is_up(DEV_DIR):
+    if os.path.exists(DEV_DIR) and is_up(DEV_DIR):
         tear_down(DEV_DIR, args)
     elif is_up(TEST_DIR):
         tear_down(TEST_DIR, args)
