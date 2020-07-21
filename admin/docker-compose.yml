@@ -4,5 +4,5 @@ services:
   filestore:
     image: minio/mc:${MC_VERSION}
     environment:
-      MC_HOST_minio: http://filestore:filestore@localhost:9000
+      MC_HOST_minio: https://${AWS_ACCESS_KEY_ID}:${AWS_SECRET_ACCESS_KEY}@${FILESTORE_HOST}:9000
     network_mode: host

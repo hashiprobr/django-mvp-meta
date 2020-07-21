@@ -4,57 +4,67 @@ services:
   broker:
     image: redis:${REDIS_VERSION}
     command: --port 6379
+    restart: unless-stopped
 
   db:
     image: postgres:${POSTGRES_VERSION}
     volumes:
       - ./db:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: test
-      POSTGRES_USER: test
-      POSTGRES_PASSWORD: test
+      POSTGRES_DB: ${DATABASE_NAME}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
     command: -p 5432
+    restart: unless-stopped
 
   filestore:
     image: minio/minio:${MINIO_VERSION}
     volumes:
       - ./filestore:/data
+      - /etc/letsencrypt/live/${STAGE_HOST}/fullchain.pem:/certs/public.crt:ro
+      - /etc/letsencrypt/live/${STAGE_HOST}/privkey.pem:/certs/private.key:ro
     environment:
-      MINIO_ACCESS_KEY: filestore
-      MINIO_SECRET_KEY: filestore
-    command: server /data --address :9000
+      MINIO_ACCESS_KEY: ${AWS_ACCESS_KEY_ID}
+      MINIO_SECRET_KEY: ${AWS_SECRET_ACCESS_KEY}
+      MINIO_BROWSER: 0
+    command: server /data --address :9000 --certs-dir /certs
     ports:
       - 9000:9000
+    restart: unless-stopped
 
   web:
+    image: ${IMAGE_NAME}:latest
     build:
       context: ..
       args:
-        stage: test
+        stage: base
         python_version: ${PYTHON_VERSION}
         base_dir: ${BASE_DIR}
         base_name: ${BASE_NAME}
     environment:
       CONTAINED: 1
-      SECRET_KEY: test
-      TEMPLATE_DEBUG: 1
-      BROKER_HOST: broker
-      BROKER_PORT: 6379
-      DATABASE_HOST: db
-      DATABASE_PORT: 5432
-      DATABASE_NAME: test
-      DATABASE_USER: test
-      DATABASE_PASSWORD: test
-      AWS_S3_ENDPOINT_URL: http://filestore:9000
-      AWS_S3_OVERRIDE_URL: http://localhost:9000
-      SECURE_HSTS_SECONDS: 0
-      SECURE_SSL_REDIRECT: 0
-      SESSION_COOKIE_SECURE: 0
-      CSRF_COOKIE_SECURE: 0
+      SECRET_KEY: ${SECRET_KEY}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      BROKER_HOST: ${BROKER_HOST}
+      BROKER_PORT: ${BROKER_PORT}
+      DATABASE_HOST: ${DATABASE_HOST}
+      DATABASE_PORT: ${DATABASE_PORT}
+      DATABASE_NAME: ${DATABASE_NAME}
+      DATABASE_USER: ${DATABASE_USER}
+      DATABASE_PASSWORD: ${DATABASE_PASSWORD}
+      AWS_S3_ENDPOINT_URL: https://${FILESTORE_HOST}:9000
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY}
+    restart: unless-stopped
 
   proxy:
     image: nginx:${NGINX_VERSION}
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /etc/letsencrypt/live/${STAGE_HOST}/fullchain.pem:/etc/letsencrypt/fullchain.pem:ro
+      - /etc/letsencrypt/live/${STAGE_HOST}/privkey.pem:/etc/letsencrypt/privkey.pem:ro
+      - /etc/letsencrypt/ssl-dhparams.pem:/etc/letsencrypt/ssl-dhparams.pem:ro
     ports:
       - 80:80
+      - 443:443
+    restart: unless-stopped
