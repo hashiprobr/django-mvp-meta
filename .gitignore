@@ -1,6 +1,4 @@
 env
 core
-dev/db
-dev/filestore
 test/db
 test/filestore
