@@ -10,7 +10,7 @@ FROM base AS test
 RUN apt-get update &&\
     wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb &&\
     apt-get -y install ./google-chrome-stable_current_amd64.deb &&\
-    wget https://chromedriver.storage.googleapis.com/`curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE`/chromedriver_linux64.zip &&\
+    wget https://chromedriver.storage.googleapis.com/`curl https://chromedriver.storage.googleapis.com/LATEST_RELEASE_84`/chromedriver_linux64.zip &&\
     unzip chromedriver_linux64.zip -d /usr/bin
 COPY test_requirements.txt .
 RUN pip install -r test_requirements.txt
