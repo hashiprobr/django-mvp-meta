@@ -142,7 +142,12 @@ def remotemanage(args):
         else:
             path = None
 
-        compose_call(TEST_DIR, ['exec', '-T', 'web', './manage.py', *args])
+        command = ['exec']
+
+        if 'createsuperuser' not in args:
+            command.append('-T')
+
+        compose_call(TEST_DIR, [*command, 'web', './manage.py', *args])
 
         if path is not None:
             rb(path)
