@@ -37,7 +37,6 @@ services:
     build:
       context: ..
       args:
-        stage: base
         python_version: ${PYTHON_VERSION}
         base_dir: ${BASE_DIR}
         base_name: ${BASE_NAME}
@@ -45,10 +44,10 @@ services:
       CONTAINED: 1
       SECRET_KEY: ${SECRET_KEY}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS}
-      BROKER_HOST: ${BROKER_HOST}
-      BROKER_PORT: ${BROKER_PORT}
-      DATABASE_HOST: ${DATABASE_HOST}
-      DATABASE_PORT: ${DATABASE_PORT}
+      BROKER_HOST: broker
+      BROKER_PORT: 6379
+      DATABASE_HOST: db
+      DATABASE_PORT: 5432
       DATABASE_NAME: ${DATABASE_NAME}
       DATABASE_USER: ${DATABASE_USER}
       DATABASE_PASSWORD: ${DATABASE_PASSWORD}
