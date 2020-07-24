@@ -36,7 +36,6 @@ services:
     build:
       context: ..
       args:
-        stage: test
         python_version: ${PYTHON_VERSION}
         base_dir: ${BASE_DIR}
         base_name: ${BASE_NAME}
