@@ -19,6 +19,14 @@ services:
     ports:
       - 5431:5431
 
+  mail:
+    image: python:${PYTHON_VERSION}
+    environment:
+      PYTHONUNBUFFERED: 1
+    entrypoint: python -m smtpd -n -c DebuggingServer 0.0.0.0:1025
+    ports:
+      - 1025:1025
+
   dbadmin:
     image: dpage/pgadmin4:4.${PGADMIN4_VERSION}
     volumes:
