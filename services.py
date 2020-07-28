@@ -80,17 +80,6 @@ def mc(args):
         pass
 
 
-def rb(path):
-    mc(['rb', path, '--force'])
-
-
-def rm(path):
-    try:
-        shutil.rmtree(path)
-    except FileNotFoundError:
-        pass
-
-
 def dev(args):
     if os.path.exists(DEV_DIR):
         if is_up(DEV_DIR):
@@ -136,7 +125,6 @@ def remotemanage(args):
     if is_up(TEST_DIR):
         if 'test' in args:
             path = 'minio/media-test'
-            rb(path)
             mc(['mb', path])
             mc(['policy', 'set', 'download', path + '/public'])
         else:
@@ -147,21 +135,16 @@ def remotemanage(args):
         if 'createsuperuser' not in args:
             command.append('-T')
 
-        compose_call(TEST_DIR, [*command, 'web', './manage.py', *args])
-
-        if path is not None:
-            rb(path)
+        try:
+            compose_call(TEST_DIR, [*command, 'web', './manage.py', *args])
+        finally:
+            if path is not None:
+                mc(['rb', path, '--force'])
     else:
         print('Testing environment not running')
 
 
 def localmanage(args):
-    if 'test' in args:
-        path = os.path.join('dev', 'filestore', 'media-test')
-        rm(path)
-    else:
-        path = None
-
     if 'collectstatic' in args:
         if is_up(TEST_DIR):
             mc(['mb', 'minio/static'])
@@ -171,10 +154,15 @@ def localmanage(args):
         else:
             print('Testing environment not running')
 
-    prodmanage(args)
-
-    if path is not None:
-        rm(path)
+    try:
+        prodmanage(args)
+    finally:
+        if 'test' in args:
+            path = os.path.join('dev', 'filestore', 'media-test')
+            try:
+                shutil.rmtree(path)
+            except FileNotFoundError:
+                pass
 
 
 def prodmanage(args):
