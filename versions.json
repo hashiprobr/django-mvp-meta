@@ -1,4 +1,5 @@
 {
+  "memcached": "1.6",
   "redis": "6.0",
   "postgres": "13",
   "pgadmin4": "23",

@@ -1,6 +1,11 @@
 version: '3.7'
 
 services:
+  cache:
+    image: memcached:${MEMCACHED_VERSION}
+    command: -p 11211
+    restart: unless-stopped
+
   broker:
     image: redis:${REDIS_VERSION}
     command: --port 6379
@@ -44,6 +49,8 @@ services:
       CONTAINED: 1
       SECRET_KEY: ${SECRET_KEY}
       ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+      CACHE_HOST: cache
+      CACHE_PORT: 11211
       BROKER_HOST: broker
       BROKER_PORT: 6379
       DATABASE_HOST: db
