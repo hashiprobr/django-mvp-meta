@@ -1,6 +1,12 @@
 version: '3.7'
 
 services:
+  cache:
+    image: memcached:${MEMCACHED_VERSION}
+    command: -p 11210
+    ports:
+      - 11210:11210
+
   broker:
     image: redis:${REDIS_VERSION}
     command: --port 6378
