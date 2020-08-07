@@ -187,7 +187,7 @@ def main():
         base_dir = between('.', 'manage.py')
         base_name = between(base_dir, 'asgi.py')
 
-        with open('versions.json', encoding='utf-8') as file:
+        with open('versions.json') as file:
             data = json.load(file)
 
         for key, value in data.items():
