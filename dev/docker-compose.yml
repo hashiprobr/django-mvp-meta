@@ -39,7 +39,7 @@ services:
       - ./servers.json:/pgadmin4/servers.json:ro
     environment:
       PGADMIN_LISTEN_PORT: 5050
-      PGADMIN_DEFAULT_EMAIL: dbadmin
+      PGADMIN_DEFAULT_EMAIL: dbadmin@localhost
       PGADMIN_DEFAULT_PASSWORD: dbadmin
     ports:
       - 5050:5050
