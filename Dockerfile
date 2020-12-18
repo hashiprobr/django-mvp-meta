@@ -1,6 +1,8 @@
 ARG python_version
 FROM python:$python_version
 ENV PYTHONUNBUFFERED 1
+RUN apt-get update &&\
+    apt-get -y install libmemcached-dev
 COPY requirements.txt .
 RUN pip install -r requirements.txt
 ARG base_dir
