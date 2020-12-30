@@ -48,7 +48,7 @@ def compose_call(dir, args):
 def is_up(dir):
     output = subprocess.check_output(compose(dir, ['ps']))
 
-    for line in output.decode('utf-8').strip().split('\n')[2:]:
+    for line in output.decode().strip().split('\n')[2:]:
         words = line.strip().split()
 
         if words:
