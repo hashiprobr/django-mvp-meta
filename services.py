@@ -6,8 +6,6 @@ import shutil
 import subprocess
 import sys
 
-from subprocess import CalledProcessError
-
 
 DEV_DIR = 'dev'
 
@@ -42,7 +40,7 @@ def compose(dir, args):
 
 
 def compose_call(dir, args):
-    subprocess.check_call(compose(dir, args))
+    subprocess.call(compose(dir, args))
 
 
 def is_up(dir):
@@ -74,10 +72,7 @@ def build(args):
 
 
 def mc(args):
-    try:
-        compose_call(ADMIN_DIR, ['run', 'filestore', *args])
-    except CalledProcessError:
-        pass
+    compose_call(ADMIN_DIR, ['run', 'filestore', *args])
 
 
 def dev(args):
@@ -166,7 +161,7 @@ def localmanage(args):
 
 
 def prodmanage(args):
-    subprocess.check_call(['./manage.py', *args], cwd=os.environ['BASE_DIR'])
+    subprocess.call(['./manage.py', *args], cwd=os.environ['BASE_DIR'])
 
 
 def main():
