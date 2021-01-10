@@ -6,6 +6,8 @@ import shutil
 import subprocess
 import sys
 
+from subprocess import PIPE, CalledProcessError
+
 
 DEV_DIR = 'dev'
 
@@ -40,13 +42,13 @@ def compose(dir, args):
 
 
 def compose_call(dir, args):
-    subprocess.call(compose(dir, args))
+    subprocess.run(compose(dir, args), check=True)
 
 
 def is_up(dir):
-    output = subprocess.check_output(compose(dir, ['ps']))
+    process = subprocess.run(compose(dir, ['ps']), check=True, stdout=PIPE)
 
-    for line in output.decode().strip().split('\n')[2:]:
+    for line in process.stdout.decode().strip().split('\n')[2:]:
         words = line.strip().split()
 
         if words:
@@ -72,7 +74,10 @@ def build(args):
 
 
 def mc(args):
-    compose_call(ADMIN_DIR, ['run', 'filestore', *args])
+    try:
+        compose_call(ADMIN_DIR, ['run', 'filestore', *args])
+    except CalledProcessError:
+        pass
 
 
 def dev(args):
@@ -161,7 +166,7 @@ def localmanage(args):
 
 
 def prodmanage(args):
-    subprocess.call(['./manage.py', *args], cwd=os.environ['BASE_DIR'])
+    subprocess.run(['./manage.py', *args], check=True, cwd=os.environ['BASE_DIR'])
 
 
 def main():
@@ -191,7 +196,10 @@ def main():
         os.environ['BASE_DIR'] = base_dir
         os.environ['BASE_NAME'] = base_name
 
-        subcommands[sys.argv[1]](sys.argv[2:])
+        try:
+            subcommands[sys.argv[1]](sys.argv[2:])
+        except CalledProcessError as error:
+            sys.exit(error.returncode)
 
 
 if __name__ == '__main__':
