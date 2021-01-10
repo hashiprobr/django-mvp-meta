@@ -41,7 +41,7 @@ def compose(dir, args):
     return ['docker-compose', '-f', path, *args]
 
 
-def compose_call(dir, args):
+def run_compose(dir, args):
     subprocess.run(compose(dir, args), check=True)
 
 
@@ -58,24 +58,24 @@ def is_up(dir):
 
 
 def set_up(dir, args):
-    compose_call(dir, ['up', *args])
+    run_compose(dir, ['up', *args])
 
 
 def tear_set(dir, args):
-    compose_call(dir, ['restart', *args])
+    run_compose(dir, ['restart', *args])
 
 
 def tear_down(dir, args):
-    compose_call(dir, ['down', *args])
+    run_compose(dir, ['down', *args])
 
 
 def build(args):
-    compose_call(TEST_DIR, ['build', 'web', *args])
+    run_compose(TEST_DIR, ['build', 'web', *args])
 
 
 def mc(args):
     try:
-        compose_call(ADMIN_DIR, ['run', 'filestore', *args])
+        run_compose(ADMIN_DIR, ['run', 'filestore', *args])
     except CalledProcessError:
         pass
 
@@ -136,7 +136,7 @@ def remotemanage(args):
             command.append('-T')
 
         try:
-            compose_call(TEST_DIR, [*command, 'web', './manage.py', *args])
+            run_compose(TEST_DIR, [*command, 'web', './manage.py', *args])
         finally:
             if path is not None:
                 mc(['rb', path, '--force'])
